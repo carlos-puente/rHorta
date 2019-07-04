@@ -65,6 +65,19 @@ class SensorMiFlora(db.Model):
 	firmware =db.Column(db.String, unique=False, nullable=True)  
 	ultima_medicion= db.Column(db.Date, unique=False, nullable=True)
 
+# Obxecto Modelo da táboa sensores_mi_flora
+class SensorMiFloraHist(db.Model):
+	__tablename__ = 'sensores_mi_flora_historico'
+	mac_addr = db.Column(db.String, primary_key=True)
+	humidade =db.Column(db.Float, unique=False, nullable=True) 
+	temperatura=db.Column(db.Float, unique=False, nullable=True) 
+	nombre=db.Column(db.String, unique=False, nullable=True)
+	nivel_ph=db.Column(db.Float, unique=False, nullable=True)
+	luz_solar =db.Column(db.Float, unique=False, nullable=True)
+	nivel_bateria =db.Column(db.Float, unique=False, nullable=True)  
+	firmware =db.Column(db.String, unique=False, nullable=True)  
+	fecha= db.Column(db.Date, unique=False, nullable=True)
+
 
 # Realiza unha consulta a base de datos, na táboa propiedades, para obter o valor de id_evento
 def id_evento():
@@ -92,7 +105,11 @@ def gardar_info_sensores():
 	try:
 		list_of_dicts = json.loads(request.json)
 		for d in list_of_dicts:		
+			fech = datetime.now()
 			db_session.query(SensorMiFlora).filter(SensorMiFlora.mac_addr == d['MAC']).update({'ultima_medicion': datetime.now(),'humidade':d['HUMIDADE'],'temperatura':d['TEMPERATURA'], 'nivel_ph':d['PH'], 'firmware':d['FW'], 'luz_solar':d['LUZ'], 'nivel_bateria':d['BATERIA']})
+			db_session.commit()
+			historico = SensorMiFloraHist(mac_addr = d['MAC'],humidade =d['HUMIDADE'],temperatura=d['TEMPERATURA'],nombre=d['NOME'],nivel_ph=d['PH'],luz_solar =d['LUZ'],nivel_bateria =d['BATERIA'],firmware =d['FW'],fecha= fech)
+			db_session.add(historico)
 			db_session.commit()
 		return jsonify({'result':'OK'}), 200
 	except:

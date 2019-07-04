@@ -17,6 +17,26 @@ WITH (
 ALTER TABLE public.sensores_mi_flora
   OWNER TO pi;
 
+CREATE TABLE public.sensores_mi_flora_historico
+(
+  mac_addr character varying(50) NOT NULL,
+  humidade numeric,
+  temperatura numeric,
+  nombre character varying(255),
+  nivel_ph numeric,
+  luz_solar numeric,
+  nivel_bateria numeric,
+  firmware character varying(10),
+  fecha timestamp without time zone NOT NULL,
+  CONSTRAINT pk_sensores_mi_flora_hist PRIMARY KEY (mac_addr, fecha)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.sensores_mi_flora_historico
+  OWNER TO pi;
+
+
 CREATE TABLE public.propiedades
 (
   clave character varying(50) NOT NULL,
