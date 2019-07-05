@@ -2,8 +2,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine, and_, text
-from sqlalchemy.orm import sessionmaker
 from datetime import datetime
 
 # Obxecto Modelo da táboa propiedades
