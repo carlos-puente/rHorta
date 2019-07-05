@@ -21,7 +21,7 @@ GPIO.setup(canle_GPIO,GPIO.OUT)
 app = Flask(__name__)
 
 # CONFIGURACION BASE DE DATOS
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://pi:XXXXXX@localhost/rHorta'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://pi:XXXXXXXX@localhost/rHorta'
 db = SQLAlchemy(app)
 
 # Creamos un obxecto para interactuar coa base de datos
