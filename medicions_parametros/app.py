@@ -15,6 +15,7 @@ from miflora.miflora_poller import MiFloraPoller, MI_CONDUCTIVITY, MI_MOISTURE, 
 URL = "http://localhost:5000"
 METODO_MAC_SENSORES = "/mac_sensores"
 METODO_GARDAR_INFO = "/gardar_info_sensores"
+
 MAX_PETICIONS = 20
 # obtemos os datos de cada sensor mi_flora {nome:MAC} da API
 r = requests.get(url = URL+METODO_MAC_SENSORES, params = None) 
@@ -55,7 +56,7 @@ for nome in datos:
 			# engadimos ao diccionario o par {'BATERIA':bateria}
 			d['BATERIA'] = poller.parameter_value(MI_BATTERY)
 			# Cando recuperamos todo, mostramos a información e engadimos á lista
-			print("Info obtida tras "+num_peticions+" peticions: "+str(d))
+			print("Info obtida tras "+str(num_peticions)+" peticions: "+str(d))
 			lInfoSensor.append(d)
 			# Como o proceso foi OK, rompemos o bucle, e así analizar os outros sensores mi_flora
 			break
