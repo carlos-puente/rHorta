@@ -12,7 +12,9 @@ import json
 import requests
 
 # GPIO PROPIEDADES E INICIALIZACIÓN
+#canle_GPIO desaparecerá, xa que cando aparezca o rego por zona, obteremos este valor mediante a táboa CONFIGURACION_POR_ZONA
 canle_GPIO = 21
+# resto de configuracion de GPIO e inicializacion
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(canle_GPIO,GPIO.OUT)
 
@@ -94,12 +96,14 @@ def activar_bomba_auga():
 # Activa a bomba de auga, mandando un GPIO.LOW ó relé
 def desactivar_bomba_auga():
 	accion_rele(canle_GPIO, GPIO.LOW)
-
+	
+# devolve o estado do rego (ACTIVO ou INACTIVO)
 def get_estado_rego():
 	propiedad = db_session.query(Propiedad).filter(Propiedad.clave == 'estado_rego').one();
 	return propiedad.valor
 
-
+# actualiza na taboa sensores_mi_flora os parametros medidos por os diferentes sensores mi_flora. 
+# garda na taboa sensores_mi_flora_historico un novo rexistro cós parametros medidos por os diferentes sensores mi_flora. 
 @app.route('/gardar_info_sensores', methods=['POST'])
 def gardar_info_sensores():
 	try:
@@ -115,7 +119,7 @@ def gardar_info_sensores():
 	except:
 		return jsonify({'result':'KO'}), 403
 
-
+#Devolve un JSON có nome e MAC dos diferentes sensores rexistrados en sensores_mi_flora
 @app.route("/mac_sensores")
 def get_mac_sensores():
 	result = db_session.query(SensorMiFlora).all();
