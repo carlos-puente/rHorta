@@ -33,7 +33,7 @@ for nome in datos:
 	while num_peticions<=MAX_PETICIONS:
 		# executaremos este bucle mentres non fagamos unha medición correcta
 		try:
-			num_peticions++
+			num_peticions = num_peticions+1
 			# obtemos as medicións do sensor mi flora
 			poller = MiFloraPoller(mac_addr, BluepyBackend)
 			print("\nObtendo datos de "+nome+" ("+mac_addr+")")
