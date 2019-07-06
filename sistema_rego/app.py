@@ -22,13 +22,14 @@ r = requests.get(url = URL+METODO_MAC_SENSORES, params = None)
 # Obtemos os datos en formato JSON
 datos = r.json()
 lInfoZonas = []
-
+lMediaLuz = []
 for nome in datos:
 	mac_addr = datos[nome]
 	info = requests.get(url = URL+METODO_OBTER_INFO+mac_addr, params = None)
 	s1 = json.dumps(info.json())
 	d = json.loads(s1)
 	datosSensor = DatosSensor(d['MAC'],d['HUMIDADE'],d['TEMPERATURA'],d['NOME'],d['NIVEL_PH'],d['LUZ_SOLAR'],d['ULTIMA_MEDICION'],d['ZONA'])
+	lMediaLuz.append(datosSensor.luz_solar)		
 	tupla = {}
 	if len(lInfoZonas) == 0:
 		tupla[datosSensor.zona] = [datosSensor.humidade]
@@ -44,4 +45,6 @@ for nome in datos:
 		if enc == 0:
 			tupla[datosSensor.zona] = [datosSensor.humidade]
 			lInfoZonas.append(tupla)
-res = requests.post(url = URL+METODO_REGO, json=json.dumps(lInfoZonas))
+media = (sum(l) / float(len(l)))
+if media >= 150:
+	res = requests.post(url = URL+METODO_REGO, json=json.dumps(lInfoZonas))
