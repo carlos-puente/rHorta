@@ -30,7 +30,7 @@ $ sudo hcitool lescan
 
 E así comprobar que estanse a listar correctamente.
 
-##Instalando postgreSQL
+## Instalando postgreSQL
 
 Os datos que obteñamos, así como eventos de rego e demáis, estarán gardados nunha base de datos, escollendo PostgreSQL como xestor. A instalación é moi sinxela.
 
@@ -42,9 +42,9 @@ $ createuser pi -P --interactive
 
 Ao executar "createuser pi -P --interactive" o sistema irá pedíndonos o contrasinal para o usuario pi, así como se queremos que sexa administrador (algo que sí queremos).
 
-##Instalando os aplicativos de rHorta
+## Instalando os aplicativos de rHorta
 
-###Descargando o proxecto
+### Descargando o proxecto
 
 ```
 $ cd ~
@@ -53,7 +53,7 @@ $ git clone https://github.com/carlos-puente/rHorta.git
 
 Despois de executar estes dous comandos, o noso sistema estará en ~/rHorta.
 
-###Posta en marcha da base de datos
+### Posta en marcha da base de datos
 
 Debemos crear unha base de datos seguindo o seguinte diagrama:
 
@@ -68,7 +68,7 @@ Debemos crear unha base de datos seguindo o seguinte diagrama:
 
 Podemos importala mediante o script dispoñible en resources/schema.sql. Utilizando, por exemplo, o pgAdmin3 (Programacion > pgAdmin), instalado no paso anterior para tal efecto.
 
-###Instalación dos requerimentos para os aplicativos.
+### Instalación dos requerimentos para os aplicativos.
 
 Debemos instalar unha serie de paquetes vía pip3, para que o noso aplicativo funcione correctamente.
 
