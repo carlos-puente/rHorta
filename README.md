@@ -2,6 +2,9 @@
 
 rHorta é un proxecto de ocio e aprendizaxe, ideado có obxectivo de deseñar unha horta domótica e sustentable partindo dun nivel nulo de electrónica, utilizando Raspberry Pi e sensores de baixo coste. En canto a nocións informáticas, partiremos dun nivel alto de programación, aínda que sen experiencia en desenvolvemento para placas e sensores.
 
+Máis información sobre o estado do proxecto: [aquí](http://carlosjai.me/gl/rhorta/)
+
+
 # Guía de instalación da API
 Ollo, esto está en construcción.
 
