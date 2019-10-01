@@ -2,86 +2,107 @@
 
 rHorta é un proxecto de ocio e aprendizaxe, ideado có obxectivo de deseñar unha horta domótica e sustentable partindo dun nivel nulo de electrónica, utilizando Raspberry Pi e sensores de baixo coste. En canto a nocións informáticas, partiremos dun nivel alto de programación, aínda que sen experiencia en desenvolvemento para placas e sensores.
 
-## Getting Started
+# Guía de instalación da API
+Ollo, esto está en construcción.
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+## Instalando python3
 
-### Prerequisites
-
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
+A libraría que utilizaremos para comunicarnos cós sensores MiFlora, precisa python3, así que debemos asegurarnos que o noso sistema o teña correctamente instalado. Para iso executamos os seguintes comandos:
 
 ```
-Give the example
+$ sudo apt-get install python3-dev libffi-dev libssl-dev -y
+$ wget https://www.python.org/ftp/python/3.6.3/Python-3.6.3.tar.xz
+$ tar xJf Python-3.6.3.tar.xz
+$ cd Python-3.6.3
+$ ./configure
+$ make
+$ sudo make install
+$ sudo pip3 install --upgrade pip
+$ sudo apt install git python3 python3-pip bluetooth bluez python-dev python-rpi.gpio picap
+$ picap-setup
 ```
 
-And repeat
+Despois de executar os comandos anteriores, cós sensores MiFlora encendidos, recomendo facer un:
 
 ```
-until finished
+$ sudo hcitool lescan
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+E así comprobar que estanse a listar correctamente.
 
-## Running the tests
+##Instalando postgreSQL
 
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
+Os datos que obteñamos, así como eventos de rego e demáis, estarán gardados nunha base de datos, escollendo PostgreSQL como xestor. A instalación é moi sinxela.
 
 ```
-Give an example
+$ sudo apt install postgresql libpq-dev postgresql-client pgadmin3 postgresql-client-common -y
+$ sudo su postgres
+$ createuser pi -P --interactive
 ```
 
-### And coding style tests
+Ao executar "createuser pi -P --interactive" o sistema irá pedíndonos o contrasinal para o usuario pi, así como se queremos que sexa administrador (algo que sí queremos).
 
-Explain what these tests test and why
+##Instalando os aplicativos de rHorta
+
+###Descargando o proxecto
 
 ```
-Give an example
+$ cd ~
+$ git clone https://github.com/carlos-puente/rHorta.git
 ```
 
-## Deployment
+Despois de executar estes dous comandos, o noso sistema estará en ~/rHorta.
 
-Add additional notes about how to deploy this on a live system
+###Posta en marcha da base de datos
 
-## Built With
+Debemos crear unha base de datos seguindo o seguinte diagrama:
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+![Alt text](http://carlosjai.me/wp-content/uploads/2019/07/db.png)
 
-## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+* **zona**: información sobre a zona de rego. Está pensada para que poida haber varias zonas con rego individualizado, xa sexan zonas diferentes na horta, ou por exemplo, duas macetas con necesidades diferentes.
+* **sensores_mi_flora**: información da última medición dos parámetros dun sensor determinado.
+* **sensores_mi_flora_historico**: histórico de todas as medicións de tódolos sensores do sistema.
+* **propiedades**: sistema clave valor para almacenar propiedades.
+* **eventos_rego**: auditoría dos regos por zona.
 
-## Versioning
+Podemos importala mediante o script dispoñible en resources/schema.sql. Utilizando, por exemplo, o pgAdmin3 (Programacion > pgAdmin), instalado no paso anterior para tal efecto.
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+###Instalación dos requerimentos para os aplicativos.
 
-## Authors
+Debemos instalar unha serie de paquetes vía pip3, para que o noso aplicativo funcione correctamente.
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+```
+$ sudo pip3 install psycopg2
+$ sudo pip3 install btlewrap
+$ sudo pip3 install miflora
+$ sudo pip3 install bluepy
+$ sudo pip3 install pexpect
+$ sudo pip3 install requests
+$ sudo pip3 install flask
+$ sudo pip3 install flask_sqlalchemy
+$ sudo pip3 install RPi.GPIO
+```
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+### Automatizando a execución
 
-## License
+Despois do paso anterior, o sistema estaría instalado, e poderíamos lanzar cada un dos aplicativos (aloxados en ~/rHorta/api, ~/rHorta/sistema_rego e ~/rHorta/medicions_parametros). Pero é preferible automatizalo no cron.
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+```
+$ sudo crontab -e
+```
 
-## Acknowledgments
+Onde engadiremos:
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+```
+@reboot sh /home/pi/rHorta/api/launcher.sh >/home/pi/rHorta/logs/cronlog 2>&1
+@hourly sh /home/pi/rHorta/medicions_parametros/launcher.sh >/home/pi/rHorta/logs/cronlog 2>&1
+0 0,6,8,10,12,16,18,20 * * * /home/pi/rHorta/sistema_rego/launcher.sh >/home/pi/rHorta/logs/cronlog 2>&1
+```
+Ollo, utilizamos /home/pi/ como path onde estará rHorta.
+
+* A API onde teremos os microservizos, executarase ao inicio, mediante: @reboot sh /home/pi/rHorta/api/launcher.sh
+* Realizaremos a medición dos parámetros dos sensores cada hora, mediante: @hourly sh /home/pi/rHorta/medicions_parametros/launcher.sh
+* Comprobaremos se fai falta regar (e regarase se é necesario) cada 2 horas, mediante: 0 0,6,8,10,12,16,18,20 * * * /home/pi/rHorta/sistema_rego/launcher.sh
+
+Todos estes métodos crearán logs en ~/rHorta/logs/cronlog
