@@ -66,7 +66,7 @@ Debemos crear unha base de datos seguindo o seguinte diagrama:
 * **propiedades**: sistema clave valor para almacenar propiedades.
 * **eventos_rego**: auditoría dos regos por zona.
 
-Podemos importala mediante o script dispoñible en resources/schema.sql. Utilizando, por exemplo, o pgAdmin3 (Programacion > pgAdmin), instalado no paso anterior para tal efecto.
+Podemos importala mediante o script dispoñible en [resources/schema.sql](resources/schema.sql). Utilizando, por exemplo, o pgAdmin3 (Programacion > pgAdmin), instalado no paso anterior para tal efecto.
 
 ### Instalación dos requerimentos para os aplicativos.
 
